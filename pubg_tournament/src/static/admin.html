@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUBG Tournament Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+        <nav class="navbar navbar-dark bg-dark d-md-none">
+        <div class="container-fluid">
+         <button class="btn btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle sidebar">
+        ☰ Menu
+        </button>
+        </div>
+        </nav>
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="admin-header text-center mb-4">
+                        <h2>Admin Panel</h2>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#matches" data-bs-toggle="tab">
+                                Matches
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#teams" data-bs-toggle="tab">
+                                Teams
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#results" data-bs-toggle="tab">
+                                Match Results
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#settings" data-bs-toggle="tab">
+                                Site Settings
+                            </a>
+                        </li>
+                        <li class="nav-item mt-5">
+                            <a class="nav-link text-danger" href="#" id="logout-btn">
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <!-- Login Form (shown by default) -->
+                <div id="login-container" class="login-container">
+                    <div class="login-form-container">
+                        <h2 class="text-center mb-4">Admin Login</h2>
+                        <form id="login-form">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" required>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Login</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Admin Content (hidden by default) -->
+                <div id="admin-content" class="admin-content d-none">
+                    <div class="tab-content">
+                        <!-- Dashboard Tab -->
+                        <div class="tab-pane fade show active" id="dashboard">
+                            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                                <h1 class="h2">Dashboard</h1>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-4">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Total Teams</h5>
+                                            <p class="card-text" id="total-teams">Loading...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Upcoming Matches</h5>
+                                            <p class="card-text" id="upcoming-matches">Loading...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card bg-danger text-white">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Live Matches</h5>
+                                            <p class="card-text" id="live-matches">Loading...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            Top Teams
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="top-teams-list">Loading...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            Recent Matches
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="recent-matches-list">Loading...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Matches Tab -->
+                        <div class="tab-pane fade" id="matches">
+                            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                                <h1 class="h2">Matches</h1>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMatchModal">Add New Match</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Date</th>
+                                            <th>Map</th>
+                                            <th>Status</th>
+                                            <th>YouTube Link</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="matches-table-body">
+                                        <tr>
+                                            <td colspan="7" class="text-center">Loading matches...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Teams Tab -->
+                        <div class="tab-pane fade" id="teams">
+                            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                                <h1 class="h2">Teams</h1>
+                                <button id="download-excel-btn" class="btn btn-primary">Download Excel</button>
+                            </div>
+
+                            <!-- Search input -->
+                            <div class="mb-3">
+                                <input type="text" id="team-search-input" class="form-control" placeholder="Search teams by name, captain, or rank...">
+                            </div>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Logo</th>
+                                                    <th>Name</th>
+                                                    <th>Captain</th>
+                                                    <th>Registration Date</th>
+                                                    <th>Points</th>
+                                                    <th>Rank</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="teams-table-body">
+                                                <tr>
+                                                    <td colspan="8" class="text-center">Loading teams...</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                                                                        
+                        <!-- Match Results Tab -->
+                        <div class="tab-pane fade" id="results">
+                            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                                <h1 class="h2">Match Results</h1>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addResultModal">Add Result</button>
+                            </div>
+                            <div class="mb-4">
+                                <label for="result-match-filter" class="form-label">Filter by Match:</label>
+                                <select class="form-select" id="result-match-filter">
+                                    <option value="">All Matches</option>
+                                </select>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Match</th>
+                                            <th>Team</th>
+                                            <th>Position</th>
+                                            <th>Kills</th>
+                                            <th>Points</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="results-table-body">
+                                        <tr>
+                                            <td colspan="7" class="text-center">Loading results...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Site Settings Tab -->
+                        <div class="tab-pane fade" id="settings">
+                            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                                <h1 class="h2">Site Settings</h1>
+                            </div>
+                            <form id="site-settings-form">
+                                <div class="mb-3">
+                                    <label for="site-title" class="form-label">Site Title</label>
+                                    <input type="text" class="form-control" id="site-title">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="donation-link" class="form-label">Donation Link</label>
+                                    <input type="url" class="form-control" id="donation-link">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="youtube-channel" class="form-label">YouTube Channel</label>
+                                    <input type="url" class="form-control" id="youtube-channel">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="banner-image" class="form-label">Banner Image Path</label>
+                                    <input type="text" class="form-control" id="banner-image">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="logo-image" class="form-label">Logo Image Path</label>
+                                    <input type="text" class="form-control" id="logo-image">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Settings</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Match Modal -->
+    <div class="modal fade" id="addMatchModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Match</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-match-form">
+                        <div class="mb-3">
+                            <label for="match-name" class="form-label">Match Name</label>
+                            <input type="text" class="form-control" id="match-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="match-date" class="form-label">Match Date</label>
+                            <input type="datetime-local" class="form-control" id="match-date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="match-map" class="form-label">Map</label>
+                            <select class="form-select" id="match-map" required>
+                                <option value="">Select Map</option>
+                                <option value="Erangel">Erangel</option>
+                                <option value="Miramar">Miramar</option>
+                                <option value="Sanhok">Sanhok</option>
+                                <option value="Vikendi">Vikendi</option>
+                                <option value="Livik">Livik</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="match-status" class="form-label">Status</label>
+                            <select class="form-select" id="match-status" required>
+                                <option value="scheduled">Scheduled</option>
+                                <option value="live">Live</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="match-youtube" class="form-label">YouTube Link</label>
+                            <input type="url" class="form-control" id="match-youtube">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="save-match-btn">Save Match</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Match Modal -->
+    <div class="modal fade" id="editMatchModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Match</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-match-form">
+                        <input type="hidden" id="edit-match-id">
+                        <div class="mb-3">
+                            <label for="edit-match-name" class="form-label">Match Name</label>
+                            <input type="text" class="form-control" id="edit-match-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-match-date" class="form-label">Match Date</label>
+                            <input type="datetime-local" class="form-control" id="edit-match-date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-match-map" class="form-label">Map</label>
+                            <select class="form-select" id="edit-match-map" required>
+                                <option value="">Select Map</option>
+                                <option value="Erangel">Erangel</option>
+                                <option value="Miramar">Miramar</option>
+                                <option value="Sanhok">Sanhok</option>
+                                <option value="Vikendi">Vikendi</option>
+                                <option value="Livik">Livik</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-match-status" class="form-label">Status</label>
+                            <select class="form-select" id="edit-match-status" required>
+                                <option value="scheduled">Scheduled</option>
+                                <option value="live">Live</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-match-youtube" class="form-label">YouTube Link</label>
+                            <input type="url" class="form-control" id="edit-match-youtube">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="update-match-btn">Update Match</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Result Modal -->
+    <div class="modal fade" id="addResultModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Match Result</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-result-form">
+                        <div class="mb-3">
+                            <label for="result-match" class="form-label">Match</label>
+                            <select class="form-select" id="result-match" required>
+                                <option value="">Select Match</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="result-team" class="form-label">Team</label>
+                            <select class="form-select" id="result-team" required>
+                                <option value="">Select Team</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="result-position" class="form-label">Position</label>
+                            <input type="number" class="form-control" id="result-position" min="1" max="100" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="result-kills" class="form-label">Kills</label>
+                            <input type="number" class="form-control" id="result-kills" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="result-points" class="form-label">Points</label>
+                            <input type="number" class="form-control" id="result-points" min="0" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="save-result-btn">Save Result</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Result Modal -->
+    <div class="modal fade" id="editResultModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Match Result</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-result-form">
+                        <input type="hidden" id="edit-result-id">
+                        <div class="mb-3">
+                            <label for="edit-result-match" class="form-label">Match</label>
+                            <input type="text" class="form-control" id="edit-result-match" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-result-team" class="form-label">Team</label>
+                            <input type="text" class="form-control" id="edit-result-team" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-result-position" class="form-label">Position</label>
+                            <input type="number" class="form-control" id="edit-result-position" min="1" max="100" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-result-kills" class="form-label">Kills</label>
+                            <input type="number" class="form-control" id="edit-result-kills" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-result-points" class="form-label">Points</label>
+                            <input type="number" class="form-control" id="edit-result-points" min="0" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="update-result-btn">Update Result</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

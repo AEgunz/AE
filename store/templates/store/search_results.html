@@ -1,0 +1,50 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}Search Results for "{{ query }}"{% endblock %}
+
+{% block content %}
+<div class="main-content-area">
+    <h1 class="page-title">Search Results for: "{{ query }}"</h1>
+
+    {% if results %}
+        <div class="product-grid">
+            {% for product in results %}
+                <div class="product-card">
+                    <a href="{{ product.get_absolute_url }}">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="{% static 'path/to/default-image.png' %}" alt="Default product image">
+                        {% endif %}
+                        <h2>{{ product.name }}</h2>
+                    </a>
+                    {% if product.short_description %}
+                         <p>{{ product.short_description|truncatewords:15 }}</p>
+                    {% else %}
+                         <p>{{ product.description|truncatewords:15 }}</p>
+                    {% endif %}
+
+                    <div class="price">{{ product.price }} MAD</div>
+
+                    <form action="{% url 'store:cart_add' product.id %}" method="post" class="add-to-cart-form">
+                        {% csrf_token %}
+                        {% if product.variations.exists %}
+                            <select name="variation_id" class="product-variation-select" style="margin-bottom: 10px; padding: 5px; border-radius: 4px; border: 1px solid #ccc; width: 100%;">
+                                <option value="">Select Variation</option>
+                                {% for variation in product.variations.all %}
+                                    <option value="{{ variation.id }}">{{ variation.color_name }} (+{{ variation.additional_price }} MAD)</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn-add-to-cart">Add to Cart</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="text-align: center; font-size: 1.2em; margin-top: 30px;">No products found matching your search for "{{ query }}".</p>
+    {% endif %}
+</div>
+{% endblock %}

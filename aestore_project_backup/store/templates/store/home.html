@@ -1,0 +1,4 @@
+<a href="{% url 'product_detail' product.id %}">
+    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    <h3>{{ product.name }}</h3>
+</a>

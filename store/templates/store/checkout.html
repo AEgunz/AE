@@ -1,0 +1,106 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="container checkout-container" style="padding: 20px; max-width: 800px; margin: auto;">
+    <h1>Checkout</h1>
+
+    <div class="checkout-layout-flex" style="display: flex; flex-wrap: wrap; gap: 20px;"> {# Added class checkout-layout-flex #}
+        <div class="checkout-form-container" style="flex: 2; min-width: 300px;">
+            <h2>Shipping Information</h2>
+            <form method="post" id="checkout-form">
+                {% csrf_token %}
+                <div style="margin-bottom: 15px;">
+                    <label for="first_name" style="display: block; margin-bottom: 5px;">First Name:</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ initial_data.first_name|default:'' }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="last_name" style="display: block; margin-bottom: 5px;">Last Name:</label>
+                    <input type="text" id="last_name" name="last_name" value="{{ initial_data.last_name|default:'' }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="phone_number" style="display: block; margin-bottom: 5px;">Phone Number:</label>
+                    <input type="tel" id="phone_number" name="phone_number" value="{{ initial_data.phone_number|default:'' }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="city" style="display: block; margin-bottom: 5px;">City:</label>
+                    <select id="city" name="city" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                        <option value="">Select a City</option>
+                        {% for city_obj in cities %}
+                            <option value="{{ city_obj.id }}" data-delivery-fee="{{ city_obj.delivery_fee }}" {% if initial_data.city_name == city_obj.name %}selected{% endif %}>{{ city_obj.name }} (+{{ city_obj.delivery_fee }} DH)</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="address" style="display: block; margin-bottom: 5px;">Address:</label>
+                    <textarea id="address" name="address" rows="3" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">{{ initial_data.address|default:'' }}</textarea>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="email" style="display: block; margin-bottom: 5px;">Email (Optional):</label>
+                    <input type="email" id="email" name="email" value="{{ initial_data.email|default:'' }}" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="padding: 12px 20px; background-color: #007bff; color: white; text-decoration: none; border: none; border-radius: 4px; cursor: pointer; font-size: 1em;">Place Order</button>
+            </form>
+        </div>
+
+        <div class="order-summary-container" style="flex: 1; min-width: 250px; background-color: #f8f9fa; padding: 15px; border-radius: 4px;">
+            <h2>Order Summary</h2>
+            {% if cart %}
+                <ul style="list-style: none; padding: 0;">
+                    {% for item in cart %}
+                        <li style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9em;">
+                            <span>{{ item.product.name }} (x{{ item.quantity }})</span>
+                            <span>{{ item.total_price }} DH</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <hr>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <strong>Subtotal:</strong>
+                    <strong>{{ cart.get_total_price }} DH</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>Delivery Fee:</span>
+                    <span id="delivery-fee-display">0.00 DH</span>
+                </div>
+                <hr>
+                <div style="display: flex; justify-content: space-between; font-size: 1.1em; font-weight: bold;">
+                    <strong>Total:</strong>
+                    <strong id="grand-total-display">{{ cart.get_total_price }} DH</strong>
+                </div>
+            {% else %}
+                <p>Your cart is empty.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const citySelect = document.getElementById('city');
+    const deliveryFeeDisplay = document.getElementById('delivery-fee-display');
+    const grandTotalDisplay = document.getElementById('grand-total-display');
+    const cartSubtotal = parseFloat("{{ cart.get_total_price|default:'0' }}".replace(',', '.'));
+
+    if (citySelect && deliveryFeeDisplay && grandTotalDisplay) {
+        citySelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const deliveryFee = parseFloat(selectedOption.getAttribute('data-delivery-fee') || 0);
+            
+            deliveryFeeDisplay.textContent = deliveryFee.toFixed(2) + ' DH';
+            
+            const newGrandTotal = cartSubtotal + deliveryFee;
+            grandTotalDisplay.textContent = newGrandTotal.toFixed(2) + ' DH';
+        });
+
+        // Trigger change on load if a city is pre-selected (e.g. form repopulation)
+        if (citySelect.value) {
+            citySelect.dispatchEvent(new Event('change'));
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,1064 @@
+/* Main Styles for PUBG Mobile Tournament Website */
+
+/* Global Styles */
+:root {
+    --primary-color: #ff4655;
+    --secondary-color: #0f1923;
+    --accent-color: #ffd700;
+    --text-color: #ffffff;
+    --dark-bg: #121212;
+    --card-bg: #1e1e1e;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.section-title {
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: #0dcaf0;
+    text-transform: uppercase;
+}
+
+/* Header Styles */
+.header {
+    position: relative;
+    background-image: url('../images/pubg-header-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 2rem 0;
+    color: var(--text-color);
+}
+
+.header .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+
+.header .container {
+    position: relative;
+    z-index: 2;
+}
+
+.logo {
+    max-width: 150px;
+    height: auto;
+}
+
+.live-logo {
+    max-width: 120px;
+    height: auto;
+}
+
+.tournament-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-color);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Navigation */
+.navbar {
+    background-color: var(--secondary-color);
+    padding: 1rem 0;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: var(--text-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0.5rem 1.5rem;
+    transition: color 0.3s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: var(--primary-color);
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    background-image: url('../image/540af3d.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 6rem 0;
+    color: white;
+    z-index: 1;
+    overflow: hidden;
+    
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-section h2 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+}
+
+.hero-section .lead {
+    font-size: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    background-color: #119100;
+    border-color: #1fab00;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #119100;
+    border-color: #1fab00;
+}
+
+.watch-live {
+    background-color: #ff0000;
+    border-color: #ff0000;
+    font-weight: 600;
+}
+
+.watch-live:hover {
+    background-color: #cc0000;
+    border-color: #cc0000;
+}
+.whatsapp-button {
+  display: inline-block;
+  background-color: #25D366;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+/* ✅ Mobile styles only */
+@media (max-width: 992px) {
+  .whatsapp-button {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+}
+
+.speech-whatsapp {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: #25D366;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+}
+
+.speech-whatsapp:hover {
+  background-color: #1ebe5d;
+}
+
+.whatsapp-logo {
+  width: 24px;
+  height: 24px;
+}
+
+/* فقاعة الذيل */
+.speech-whatsapp::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+  border-top-color: #25D366;
+}
+
+.whatsapp-button:hover {
+  background-color: #1ebe5d;
+}
+
+.donate-btn {
+    background-color: #cdbb00;
+    border-color: #f1d800;
+    font-weight: 600;
+}
+
+.donate-btn:hover {
+    background-color: #218838;
+    border-color: #218838;
+}
+
+/* Live Match Section */
+.live-match-section {
+    padding: 4rem 0;
+    background-color: var(--dark-bg);
+}
+
+.live-match-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 2rem;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.live-badge {
+    position: absolute;
+    top: -15px;
+    right: 20px;
+    background-color: #ff0000;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.upcoming-matches {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 2rem;
+    height: 100%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Schedule Section */
+.schedule-section {
+    padding: 4rem 0;
+    background-color: var(--secondary-color);
+}
+
+.schedule-container {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Teams Section */
+.teams-section {
+    position: relative;
+    background-image: url('../image/Keybo.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 6rem 0;
+    color: white;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.team-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.team-card:hover {
+    transform: translateY(-5px);
+}
+
+.team-logo-container {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2a2a2a;
+    padding: 1rem;
+}
+
+.team-logo {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+}
+
+.team-info {
+    padding: 1.5rem;
+}
+
+.team-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+/* Rankings Section */
+.rankings-section {
+    padding: 4rem 0;
+    background-color: var(--secondary-color);
+}
+
+.rankings-table-container {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    overflow-x: auto;
+}
+
+.rankings-table {
+    color: var(--text-color);
+    width: 100%;
+}
+
+.rankings-table th {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.rankings-table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.rankings-table tbody tr {
+    background-color: rgba(255, 255, 255, 0.05);
+    transition: background-color 0.3s ease;
+}
+
+.rankings-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.team-logo-small {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+/* Registration Section */
+.register-section {
+    position: relative;
+    background-image: url('../image/Keybo.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 6rem 0;
+    color: white;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.registration-form-container {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.form-label {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-color);
+}
+
+.form-control:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: var(--primary-color);
+    color: var(--text-color);
+    box-shadow: 0 0 0 0.25rem rgba(255, 70, 85, 0.25);
+}
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.social-link {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.social-link:hover {
+    color: var(--primary-color);
+}
+
+.copyright {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .tournament-title {
+        font-size: 2rem;
+    }
+    
+    .hero-section h2 {
+        font-size: 2.5rem;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .cta-buttons .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .tournament-title {
+        font-size: 1.5rem;
+        margin-top: 1rem;
+    }
+    
+    .logo, .live-logo {
+        max-width: 100px;
+    }
+    
+    .hero-section {
+        padding: 4rem 0;
+    }
+    
+    .hero-section h2 {
+        font-size: 2rem;
+    }
+    
+    .hero-section .lead {
+        font-size: 1.2rem;
+    }
+}
+
+
+    .logo, .live-logo {
+        margin-bottom: 1rem;
+    }
+    
+    .tournament-title {
+        font-size: 1.25rem;
+    }
+/* ===== HEADER STYLE ===== */
+.header {
+    background: linear-gradient(to right, #0f0c29, #302b63, #24243e); /* Dark purple gradient */
+    padding: 20px 0 30px 0;
+    border-bottom: 4px solid #ff4655; /* PUBG red */
+    text-align: center;
+    position: relative;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('images/grid-pattern.png') repeat; /* Optional: subtle tech grid */
+    opacity: 0.1;
+}
+
+/* Logo Container */
+.logo-container {
+    margin-bottom: 20px;
+}
+
+.main-logo {
+    height: 120px;
+    filter: drop-shadow(0 0 10px rgba(255, 70, 85, 0.7)); /* Red glow */
+}
+
+/* Tournament Title */
+.tournament-title {
+    font-family: 'Orbitron', sans-serif; /* Gaming font */
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 0 0 15px #ff4655;
+    margin: 10px 0;
+    font-size: 2.5rem;
+}
+
+.tagline {
+    font-family: 'Rajdhani', sans-serif;
+    color: #ffd700; /* Gold */
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+}
+
+/* Live Badge */
+.live-badge {
+    margin-top: 15px;
+}
+
+.live-logo {
+    height: 80px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 15px 0;
+    border-bottom: 3px solid #ff4655; /* PUBG red */
+    position: relative;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('images/hexagon-pattern.png') repeat;
+    opacity: 0.1;
+}
+
+.tournament-title {
+    font-family: 'Orbitron', sans-serif; /* Gaming font */
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #ff4655;
+    margin: 0;
+    font-size: 1.8rem; /* Smaller on mobile */
+}
+
+.tagline {
+    font-family: 'Rajdhani', sans-serif;
+    color: #ffd700; /* Gold */
+    font-size: 1rem;
+    margin-top: 5px;
+}
+
+/* Live Logo Animation */
+.live-logo {
+    animation: pulse 1.5s infinite alternate;
+}
+/* Live Logo Animation */
+.logo {
+    animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+    from { opacity: 0.8; transform: scale(1); }
+    to { opacity: 1; transform: scale(1.05); }
+}
+
+/* Mobile Overrides */
+@media (max-width: 768px) {
+    .tournament-title {
+        font-size: 1.5rem; /* Even smaller on tiny screens */
+        letter-spacing: 1px;
+    }
+    .tagline {
+        font-size: 0.9rem;
+    }
+}
+/* bootstrap.min.css | https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css */
+
+.mt-4 {
+  /* margin-top: 1.5rem !important; */
+  margin-top: 0.5rem !important;
+}
+
+
+/* style.css | https://vendettascrim.site/css/style.css */
+.header .overlay {
+  /* background-color: rgba(0, 0, 0, 0.7); */
+background-image: url('../image/header.jpg');
+}
+
+/* style.css | https://vendettascrim.site/css/style.css */
+
+.live-match-section {
+  /* background-color: var(--dark-bg); */
+  background-color: #0f1923;
+}
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+#teams {
+  display: none;
+}
+.winner-section {
+  background-color: #f9f9f9;
+  padding: 40px 0;
+  border-top: 2px solid #ddd;
+}
+
+.winner-info h3 {
+  color: #ffffff;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.video-player video {
+  max-width: 100%;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+}
+
+/* style.css | https://vendettascrim.site/css/style.css */
+
+.mt-4 {
+  /* margin-top: 0.5rem !important; */
+  margin-top: 2.0rem !important;
+  margin-bottom: 2.0rem !important;
+}
+
+/* Element | https://vendettascrim.site/#register */
+
+#winner-video {
+  background-color: #00468c;
+}
+
+.rules-section li {
+  font-size: 18px;
+  margin-bottom: 15px;
+  padding-right: 25px; /* بدل padding-left */
+  position: relative;
+}
+.rules-section li::before {
+  content: "🔹";
+  position: absolute;
+  right: 0; /* بدل left */
+  top: 0;
+  font-size: 20px;
+}
+
+/* Element | https://vendettascrim.site/ */
+
+.winner-info > h2:nth-child(1) {
+  margin-top: 2.5rem;
+}
+
+
+/* style.css | https://vendettascrim.site/css/style.css */
+
+.upcoming-matches {
+  margin-top: 1.5rem;
+}
+
+/* style.css | https://vendettascrim.site/css/style.css */
+
+.winner-section {
+  /* background-color: #f9f9f9; */
+  /* border-top: 2px solid #ddd; */
+  background-color: #0f1923;
+  border-top: 2px solid #3e3e3e;
+}
+
+.bg-white {
+  /* background-color: rgba(var(--bs-white-rgb),var(--bs-bg-opacity)) !important; */
+  background-color: rgb(33, 37, 41) !important;
+}
+
+
+/* bootstrap.min.css | https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css */
+
+.bg-secondary {
+  /* background-color: rgba(var(--bs-secondary-rgb),var(--bs-bg-opacity)) !important; */
+  background-color: rgb(33, 37, 41) !important;
+}
+
+/* Element | https://vendettascrim.site/ */
+
+body {
+  padding-top: 1px;
+  padding-right: 1px;
+  padding-bottom: 1px;
+  padding-left: 1px;
+}
+
+.logo,
+.live-logo {
+  height: 100px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.logo {
+  animation: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.footer {
+    background-color: var(--secondary-color);
+    padding: 3rem 1rem 2rem;
+    color: var(--text-color);
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden; /* منع الهروب الأفقي */
+}
+
+.footer h4 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.footer-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 1.5rem !important;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.footer-logo {
+    height: 40px;
+    width: auto;
+    transition: transform 0.3s ease;
+    margin-right: 15px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.footer .social-links a,
+.footer .gmail-button, 
+.footer .whatsapp-button, 
+.footer .discord-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    text-decoration: none;
+}
+
+@media (max-width: 767.98px) {
+    /* تنسيق على شاشات صغيرة (موبايل) */
+    .footer .row > div {
+        text-align: center !important;
+        margin-bottom: 20px;
+    }
+
+    .footer .text-end {
+        text-align: center !important;
+    }
+
+    .footer .social-links {
+        flex-direction: row !important;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .footer-logos {
+        justify-content: center;
+        gap: 10px;
+        margin-top: 1rem !important;
+    }
+
+    .footer-logo {
+        height: 30px;
+        margin: 0 8px 8px 0;
+    }
+}
+
+.upcoming-matches {
+  min-width: 250px; /* تقدر تزيد أو تنقص على حساب التصميم */
+  box-sizing: border-box;
+}
+
+
+/* style.css | https://vendettascrim.site/css/style.css */
+
+.upcoming-matches {
+  /* margin-top: 1.5rem; */
+  margin-top: 0;
+}
+
+/* style.css | https://vendettascrim.site/css/style.css */
+@media (max-width: 767.98px) {
+  .upcoming-matches {
+    margin-top: 30px;  /* مثلا تزيد المسافة فقط في الموبايل */
+  }
+}
+
+@media (max-width: 767.98px) {
+  .tournament-title {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .header {
+    padding: 7px 0;
+  }
+}
+
+/* style.css | https://vendettascrim.site/css/style.css */
+
+.header {
+  /* padding: 15px 0; */
+  padding: 7px 0;
+}
+
+
+#scrollTopBtn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+  display: none;
+  background: linear-gradient(135deg, #ff3c00, #ffcc00);
+  color: #1a1a1a;
+  border: none;
+  padding: 12px 15px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow:
+    0 0 3px #ff3c00,
+    0 0 5px #ffcc00,
+    0 0 8px #ff3c00;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  user-select: none;
+  font-family: 'Orbitron', sans-serif;
+}
+
+#scrollTopBtn:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 0 15px #ff3c00,
+    0 0 20px #ffcc00,
+    0 0 40px #ff3c00;
+}
+
+@media (max-width: 992px) {  /* دابا التابلت والموبايل */
+  .navbar-toggler {
+    width: 30px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    z-index: 1050;
+  }
+
+  .navbar-toggler .bar {
+    height: 3px;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  .navbar-toggler[aria-expanded="true"] .bar:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+
+  .navbar-toggler[aria-expanded="true"] .bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navbar-toggler[aria-expanded="true"] .bar:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+  }
+}
+
+/* فوق 992px خلي ديزاين Bootstrap العادي */
+@media (min-width: 993px) {
+  .navbar-toggler {
+    /* التصميم الإفتراضي ديال Bootstrap */
+  }
+}
+
+.icon {
+  width: 200px; /* الحجم لي بغيت */
+  height: auto; /* باش يحافظ على النسبة */
+}
+
+/* bootstrap.min.css | https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css */
+
+.small, small {
+  /* font-size: .875em; */
+  font-size: -0.125em;
+}
+
+@media (min-width: 1200px) {
+  .h4, h4 {
+    /* font-size: 1.5rem; */
+    font-size: 2.5rem;
+  }
+}
+
+
+
+/* Element | https://vendettascrim.site/#home */
+
+
+
+
+.countdown-wrapper > h4:nth-child(1) {
+  font-size: 1.5rem;
+}
+
+.scrim-announcement {
+  direction: rtl;
+  text-align: right;
+  background: #1e1e2f;
+  color: #ffffff;
+  padding: 20px 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%; /* باش يكون responsive شوية */
+  line-height: 1.8;
+}
+
+.scrim-announcement strong {
+  color: #FFD700;
+}
+
+.scrim-announcement .icon {
+  font-size: 1.4em;
+  margin-left: 8px;
+}
+
+.winner-event {
+  background: linear-gradient(135deg, #000, #f00);
+  padding: 40px 20px;
+  border-radius: 15px;
+  max-width: 620px;
+  margin: 40px auto;
+  box-shadow: 0 10px 25px rgba(0, 102, 204, 0.25);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  direction: rtl;
+  text-align: right;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 1.2s ease forwards;
+  transition: box-shadow 0.3s ease;
+}
+
+.winner-event:hover {
+  box-shadow:
+  0 0 15px 3px rgba(140, 0, 0, 0.7), 0 0 30px 6px rgba(255, 3, 3, 0.5);
+  transform: scale(1.02);
+}
+
+.challenge-section {
+  background-color: #e6f0ff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 12px rgba(7, 55, 99, 0.1);
+  font-size: 18px;
+  line-height: 1.7;
+  color: #05294a;
+  transition: background-color 0.3s ease;
+}
+
+.challenge-section p {
+  margin: 12px 0;
+}
+
+.challenge-section strong {
+  color: #004a99;
+  font-weight: 700;
+}
+
+/* تأثير ظهور تدريجي */
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(15px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+@media (max-width: 480px) {
+  .winner-event {
+    padding: 25px 15px;
+    max-width: 95%;
+  }
+  
+  .challenge-section {
+    font-size: 16px;
+    padding: 18px 20px;
+  }
+}
+
+
+/* Element | https://vendettascrim.site/#teams */
+
+#game-event {
+  font-family: 'Cairo', sans-serif;
+}
+
+/* style.css | https://vendettascrim.site/css/style.css */
+
+@media (max-width: 480px) {
+  .winner-event {
+    /* padding: 25px 15px; */
+    padding: 21px 0px;
+  }
+}
+

@@ -1,0 +1,70 @@
+{% extends "store/base.html" %}
+{% load static %}
+{% load account socialaccount %} {# Load allauth tags #}
+
+{% block title %}Login - My E-commerce Store{% endblock %}
+
+{% block content %}
+<div class="main-content-area auth-form-container" style="max-width: 500px; margin: 40px auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+    <h1 class="page-title" style="text-align: center; margin-bottom: 25px;">Login to Your Account</h1>
+
+    {% if messages %}
+        <div style="margin-bottom: 20px;">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" style="padding: 10px; border-radius: 4px; background-color: {% if message.tags == 'success' %}#d4edda{% elif message.tags == 'error' %}#f8d7da{% elif message.tags == 'info' %}#cce5ff{% else %}#f8f9fa{% endif %}; color: {% if message.tags == 'success' %}#155724{% elif message.tags == 'error' %}#721c24{% elif message.tags == 'info' %}#004085{% else %}#343a40{% endif %}; border: 1px solid {% if message.tags == 'success' %}#c3e6cb{% elif message.tags == 'error' %}#f5c6cb{% elif message.tags == 'info' %}#b8daff{% else %}#dee2e6{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'account_login' %}"> {# Use allauth login URL #}
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div style="margin-bottom: 15px;">
+                <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: bold;">{{ field.label_tag }}</label>
+                {{ field }} {# This will render the input widget #}
+                {% if field.help_text %}
+                    <small style="display: block; color: #6c757d; margin-top: 3px;">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div style="color: #dc3545; font-size: 0.9em; margin-top: 3px;">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        
+        {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        <button type="submit" class="btn-add-to-cart" style="width: 100%; padding: 12px; font-size: 1.1em; margin-top: 10px;">Login</button>
+    </form>
+
+    {% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers %}
+        <div style="text-align: center; margin-top: 25px; margin-bottom: 15px; position: relative;">
+            <hr style="border: none; border-top: 1px solid #eee; margin: 0;">
+            <span style="background-color: #fff; padding: 0 10px; position: relative; top: -11px; color: #6c757d;">OR</span>
+        </div>
+
+        {% for provider in socialaccount_providers %}
+            {% if provider.id == 'google' %}
+                 <a href="{% provider_login_url provider.id process='login' %}" class="btn-google-signin" style="display: block; width: 100%; padding: 12px; font-size: 1em; margin-top: 10px; background-color: #db4437; color: white; text-decoration: none; border-radius: 4px; text-align: center; box-sizing: border-box;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google G" style="height: 18px; width: 18px; vertical-align: middle; margin-right: 8px;">
+                    Sign in with Google
+                </a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <p style="text-align: center; margin-top: 20px;">
+        Don't have an account? <a href="{% url 'account_signup' %}" style="color: var(--product-title-color);">Register here</a> {# Use allauth signup URL #}
+    </p>
+    {# Add a password reset link if you have that functionality #}
+    {# <p style="text-align: center; margin-top: 10px;"> #}
+    {#     <a href="{% url 'password_reset' %}" style="color: var(--product-title-color); font-size: 0.9em;">Forgot password?</a> #}
+    {# </p> #}
+</div>
+
+{# Removed inline style block as styles are now in base.html #}
+{% endblock %}

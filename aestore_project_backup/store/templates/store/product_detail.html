@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ product.name }}</title>
+    <link rel="stylesheet" href="{% static 'store/style.css' %}">
+</head>
+<body>
+    <h1>{{ product.name }}</h1>
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" width="300">
+    <p><strong>السعر:</strong> {{ product.price }} درهم</p>
+    <p><strong>الوصف:</strong> {{ product.description }}</p>
+
+    <a href="/">رجوع للصفحة الرئيسية</a>
+</body>
+</html>

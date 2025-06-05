@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>New Order Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+        }
+        .order-details {
+            margin-bottom: 20px;
+        }
+        .customer-info {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total {
+            font-weight: bold;
+            text-align: right;
+        }
+        .footer {
+            background-color: #f2f2f2;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>New Order Received</h1>
+    </div>
+    
+    <div class="content">
+        <p>A new order has been placed on your website.</p>
+        
+        <div class="order-details">
+            <h2>Order Details</h2>
+            <p><strong>Order ID:</strong> #{{ order.id }}</p>
+            <p><strong>Date:</strong> {{ order.created_at|date:"F j, Y, g:i a" }}</p>
+            <p><strong>Total Amount:</strong> {{ order.total_amount }} MAD</p>
+        </div>
+        
+        <div class="customer-info">
+            <h2>Customer Information</h2>
+            <p><strong>Name:</strong> {{ order.first_name }} {{ order.last_name }}</p>
+            <p><strong>Email:</strong> {{ order.email|default:"Not provided" }}</p>
+            <p><strong>Phone:</strong> {{ order.phone_number }}</p>
+            <p><strong>Address:</strong> {{ order.address }}</p>
+            <p><strong>City:</strong> {{ order.city_name }}</p>
+        </div>
+        
+        <h2>Order Items</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Variation</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order_items %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.variation.color_name|default:"-" }}</td>
+                    <td>{{ item.price }} MAD</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.get_cost }} MAD</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="total">Subtotal:</td>
+                    <td>{{ order.get_subtotal }} MAD</td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="total">Delivery Fee:</td>
+                    <td>{{ order.delivery_fee }} MAD</td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="total">Total:</td>
+                    <td>{{ order.total_amount }} MAD</td>
+                </tr>
+            </tfoot>
+        </table>
+        
+        <p>Please log in to the admin panel to manage this order.</p>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated email. Please do not reply to this message.</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,138 @@
+{% extends "store/base.html" %}
+{% load static %}
+{% block title %}Home - My E-commerce Store{% endblock %}
+
+{% block content %}
+    <!-- Desktop Slider -->
+    {% if slider_images %}
+    <section class="slider-container-base desktop-slider-container" id="desktop-slider" aria-label="Image Slider">
+        <div class="slider-base">
+            {% for slide_image in slider_images %}
+            <div class="slide-base">
+                {% if slide_image.link_url %}<a href="{{ slide_image.link_url }}">{% endif %}
+                <img src="{{ slide_image.image.url }}" alt="{{ slide_image.title|default:'Slide Image' }}">
+                {% if slide_image.link_url %}</a>{% endif %}
+                {% if slide_image.title or slide_image.caption %}
+                <div class="slide-caption-base">
+                    {% if slide_image.title %}<h3>{{ slide_image.title }}</h3>{% endif %}
+                    {% if slide_image.caption %}<p>{{ slide_image.caption }}</p>{% endif %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <button class="slider-arrow-base prev">
+            <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <button class="slider-arrow-base next">
+            <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+        <div class="slider-dots-base">
+            {% for slide_image in slider_images %}
+            <span class="dot-base"></span>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Mobile Slider -->
+    {% if mobile_slider_images %}
+    <section class="slider-container-base mobile-slider-container" id="mobile-slider" aria-label="Mobile Image Slider">
+        <div class="slider-base">
+            {% for slide_image in mobile_slider_images %}
+            <div class="slide-base">
+                {% if slide_image.link_url %}<a href="{{ slide_image.link_url }}">{% endif %}
+                <img src="{{ slide_image.image.url }}" alt="{{ slide_image.title|default:'Mobile Slide Image' }}">
+                {% if slide_image.link_url %}</a>{% endif %}
+                {% if slide_image.title or slide_image.caption %}
+                <div class="slide-caption-base">
+                    {% if slide_image.title %}<h3>{{ slide_image.title }}</h3>{% endif %}
+                    {% if slide_image.caption %}<p>{{ slide_image.caption }}</p>{% endif %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <button class="slider-arrow-base prev">
+             <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <button class="slider-arrow-base next">
+            <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+        <div class="slider-dots-base">
+            {% for slide_image in mobile_slider_images %}
+            <span class="dot-base"></span>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <h1 class="page-title">Welcome to Our Store!</h1>
+
+    {% if categories %}
+    <section class="category-section">
+        <h2>Shop by Category</h2>
+        <div class="category-grid">
+            {% for category in categories %}
+            <div class="category-card">
+                <a href="{% url 'store:category_detail' category_slug=category.slug %}">
+                    {% if category.image %}
+                        <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/150x150.png?text={{ category.name|urlencode }}" alt="{{ category.name }}">
+                    {% endif %}
+                    <h3 style="font-size: 1.1em; margin-top: auto; margin-bottom: 0;">{{ category.name }}</h3>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if products %}
+        <div class="product-grid">
+            {% for product in products %}
+                <div class="product-card">
+                    <a href="{% url 'store:product_detail' product_slug=product.slug %}" style="text-decoration: none; color: inherit;">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/250x200.png?text=No+Image" alt="No image available">
+                    {% endif %}
+                    </a>
+                    <div>
+                        <h2><a href="{% url 'store:product_detail' product_slug=product.slug %}" style="text-decoration: none; color: var(--product-title-color);">{{ product.name }}</a></h2>
+                         {% if product.category %}
+                            <p style="font-size: 0.8em; color: #777;">Category: {{ product.category.name }}</p>
+                        {% endif %}
+                        <p>{{ product.description|truncatewords:15 }}</p>
+                        <p class="price">{{ product.price }} DH</p>
+                        <form action="{% url 'store:cart_add' product.id %}" method="post" style="margin-top: auto;" class="add-to-cart-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-add-to-cart">Add to Cart</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No products available at the moment. Please check back later!</p>
+    {% endif %}
+
+    {% if logo_carousel_items %}
+    <section class="logo-carousel-section">
+        <h2>Our Partners</h2>
+        <div class="logo-carousel-container" id="logo-carousel-container">
+            <div class="logo-carousel-track" id="logo-carousel-track">
+                {% for item in logo_carousel_items %}
+                <div class="logo-carousel-item">
+                    {% if item.link_url %}<a href="{{ item.link_url }}" target="_blank" rel="noopener noreferrer">{% endif %}
+                    <img src="{{ item.logo_image.url }}" alt="{{ item.name }}">
+                    {% if item.link_url %}</a>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+{% endblock %}

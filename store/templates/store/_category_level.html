@@ -1,0 +1,19 @@
+{# This snippet expects a 'category_item' from the parent loop #}
+<li class="{% if category_item.children.all %}nav-item-dropdown has-submenu{% endif %}" style="display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 5px;">
+    <div style="display: flex; align-items: center; width: 100%;">
+        {% if category_item.image %}
+            <img src="{{ category_item.image.url }}" alt="{{ category_item.name }}" style="width: 30px; height: 30px; object-fit: cover; margin-right: 8px; border-radius: 4px;">
+        {% endif %}
+        <a href="{% url 'store:category_detail' category_slug=category_item.slug %}" style="flex-grow: 1;">
+            {{ category_item.name }}
+            {% if category_item.children.all %}<span class="dropdown-arrow-submenu" style="font-size: 0.8em; margin-left: 5px;">&#9656;</span>{% endif %}
+        </a>
+    </div>
+    {% if category_item.children.all %}
+        <ul class="dropdown-menu submenu" style="padding-left: 20px; list-style-type: none; width: 100%;">
+            {% for child_category in category_item.children.all %}
+                {% include "store/_category_level.html" with category_item=child_category %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</li>
