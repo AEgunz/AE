@@ -1,0 +1,73 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}My Profile - {{ profile_user.username }}{% endblock %}
+
+{% block content %}
+<div class="main-content-area profile-container" style="max-width: 700px; margin: 40px auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+    <h1 class="page-title" style="text-align: center; margin-bottom: 25px;">My Profile</h1>
+
+    {% if messages %}
+        <div style="margin-bottom: 20px;">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" style="padding: 10px; border-radius: 4px; background-color: {% if message.tags == 'success' %}#d4edda{% elif message.tags == 'error' %}#f8d7da{% else %}#cce5ff{% endif %}; color: {% if message.tags == 'success' %}#155724{% elif message.tags == 'error' %}#721c24{% else %}#004085{% endif %}; border: 1px solid {% if message.tags == 'success' %}#c3e6cb{% elif message.tags == 'error' %}#f5c6cb{% else %}#b8daff{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div style="margin-bottom: 15px;">
+            <label for="{{ form.first_name.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: bold;">First Name:</label>
+            {{ form.first_name }}
+            {% if form.first_name.help_text %}
+                <small style="display: block; color: #6c757d; margin-top: 3px;">{{ form.first_name.help_text }}</small>
+            {% endif %}
+            {% for error in form.first_name.errors %}
+                <div style="color: #dc3545; font-size: 0.9em; margin-top: 3px;">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="{{ form.last_name.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: bold;">Last Name:</label>
+            {{ form.last_name }}
+            {% if form.last_name.help_text %}
+                <small style="display: block; color: #6c757d; margin-top: 3px;">{{ form.last_name.help_text }}</small>
+            {% endif %}
+            {% for error in form.last_name.errors %}
+                <div style="color: #dc3545; font-size: 0.9em; margin-top: 3px;">{{ error }}</div>
+            {% endfor %}
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email:</label>
+            <input type="email" value="{{ profile_user.email }}" disabled style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: #e9ecef; cursor: not-allowed;">
+            <small style="display: block; color: #6c757d; margin-top: 3px;">Email cannot be changed here. <a href="{% url 'account_email' %}" style="color: var(--product-title-color);">Manage Email Addresses</a></small>
+        </div>
+
+        {% for field in form.visible_fields %}
+            {% if field.name != 'first_name' and field.name != 'last_name' %} {# Already rendered first_name and last_name #}
+            <div style="margin-bottom: 15px;">
+                <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: bold;">{{ field.label_tag }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small style="display: block; color: #6c757d; margin-top: 3px;">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div style="color: #dc3545; font-size: 0.9em; margin-top: 3px;">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endfor %}
+        
+        <button type="submit" class="btn-add-to-cart" style="width: 100%; padding: 12px; font-size: 1.1em; margin-top: 10px;">Save Changes</button>
+    </form>
+
+    <div style="margin-top: 20px; text-align: center;">
+        <a href="{% url 'account_change_password' %}" style="color: var(--product-title-color);">Change Password</a>
+    </div>
+</div>
+{% endblock %}

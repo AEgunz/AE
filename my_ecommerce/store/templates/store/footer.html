@@ -1,0 +1,74 @@
+{% load static %}
+<footer style="
+  background-color: #0c68c3;
+  color: white;
+  padding: 20px 30px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+">
+  <div style="flex: 1 1 321px; min-width: 200px;">
+    <div class="store-name">
+      <img src="{% static 'media/logo/logoae.png' %}" alt="شعار المتجر" style="height: 70px; margin-bottom: 10px;">
+    </div>
+    <p style="margin: 0;">✅ Filtres et pompes de haute performance</p>
+    <p style="margin: 0;">✅ Produits de traitement de l’eau (chlore, pH, anti-algues...)</p>
+    <p style="margin: 0;">✅ Systèmes de nettoyage (robots, aspirateurs manuels)</p>
+    <p style="margin: 0;">I🔧 Installation & accompagnement sur mesure</p>
+  </div>
+
+  <!-- باقي الفوتر كما هو -->
+
+
+  <div style="flex: 1 1 150px; min-width: 150px;">
+    <h4 style="margin: 0 0 10px 0;">Quick Links</h4>
+    <ul style="list-style: none; padding: 0; margin: 0;"> 
+      <li><a href="/" style="color: #cde6ff; text-decoration: none;">Home</a></li>   
+      <li><a href="{% url 'store:category_list' %}" style="color: #cde6ff; text-decoration: none;">Products</a></li>
+      <li><a href="/contact/" style="color: #cde6ff; text-decoration: none;">Contact</a></li>
+      <li><a href="/about-us/" style="color: #cde6ff; text-decoration: none;">About</a></li>
+    </ul>
+  </div>
+
+  <div style="flex: 1 1 200px; min-width: 200px;">
+    <h4 style="margin: 0 0 10px 0;">Contact Us</h4>
+    <p style="margin: 2px 0;">📞 <a href="tel:+212600000000" style="color: #cde6ff; text-decoration: none;">+212 600-000000</a></p>
+    <p style="margin: 2px 0;">📧 <a href="mailto:contact@aestore.ma" style="color: #cde6ff; text-decoration: none;">contact@aestore.ma</a></p>
+    <p style="margin: 2px 0;">📍 Casablanca, Morocco</p>
+  </div>
+
+  <div style="flex: 1 1 150px; min-width: 150px;">
+    <h4 style="margin: 0 0 10px 0;">Follow Us</h4>
+    <div style="display: flex; gap: 12px; font-size: 20px;display: flex;gap: 12px;font-size: 20px;justify-content: space-around;">
+        <a href="#"><img src="/media/icons/Facebook_Logo_2023.png" alt="Facebook" width="24"></a>
+      <a href="#"><img src="/media/icons/1384063.png" alt="Instagram" width="24" style="margin-right: 10px;"></a>
+      <a href="#"><img src="/media/icons/Youtube_logo.png" alt="YouTube" width="24"></a>
+    </div>
+  </div>
+
+  <div style="flex-basis: 100%; text-align: center; margin-top: 15px; font-size: 12px; color: #cde6ff;">
+    &copy; {% now "Y" %} BY AYOUB EDDARIF. All Rights Reserved.
+  </div>
+</footer>
+<style>
+  @media (max-width: 600px) {
+    footer {
+      font-size: 11px !important;
+    }
+  }
+</style>
+
+<style>
+  @media (max-width: 390px) {
+    footer {
+      font-size: 9px !important;
+    }
+  }
+</style>
+
+
+
+

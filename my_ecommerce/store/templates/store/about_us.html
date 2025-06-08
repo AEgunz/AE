@@ -1,0 +1,61 @@
+<!-- templates/about_us.html -->
+{% extends "store/base.html" %}
+
+{% block content %}
+<!-- about_us.html -->
+<section style="background: linear-gradient(to bottom, #b8dcf0, #ffffff); padding: 60px 20px; text-align: center;">
+  <h1 style="font-size: 36px; color: #003366;">À Propos</h1>
+  <p style="font-size: 18px; color: #005b99;">Les Spécialistes de Construction du Piscine Au Maroc</p>
+</section>
+
+<section style="display: flex; flex-wrap: wrap; max-width: 1100px; margin: 40px auto; padding: 20px; gap: 30px;">
+  <div style="flex: 1; min-width: 300px;">
+    <h2 style="font-size: 32px; color: #001a33;">Nous construisons<br>La piscine de vos rêves</h2>
+    <p style="margin-top: 20px; color: #333;">
+      Notre entreprise, AE Piscine Maroc, est un leader dans l'industrie de la construction et la maintenance de piscines au Maroc.
+      Grâce à plus de 20 ans d'expérience, nous proposons des services professionnels pour les piscines résidentielles et commerciales.
+    </p>
+    <p>
+      Notre équipe vous accompagne de la conception à l’entretien, avec des solutions sur mesure, adaptées à tous les besoins.
+    </p>
+    <div class="social-icons">
+      <a href="#"><img src="/media/icons/Facebook_Logo_2023.png" alt="Facebook" width="24"></a>
+      <a href="#"><img src="/media/icons/1384063.png" alt="Instagram" width="24" style="margin-right: 10px;"></a>
+      <a href="#"><img src="/media/icons/Youtube_logo.png" alt="YouTube" width="24"></a>
+    </div>
+  </div>
+
+  <style>
+        .social-icons {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    }
+
+    .social-icons a img {
+    width: 32px;
+    height: 32px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .social-icons a:hover img {
+    transform: scale(1.1);
+    opacity: 0.8;
+    }
+  </style>
+
+  <div style="flex: 1; min-width: 300px;">
+    <img src="/static/media/entretien-piscine.jpg" alt="Travail Piscine" style="width: 100%; border-radius: 10px;">
+  </div>
+</section>
+
+<section style="background-image: url('/static/media/img/pool-background.jpg'); background-size: cover; background-position: center; padding: 60px 20px; text-align: center; color: rgb(0, 110, 255);">
+  <h2 style="font-size: 28px; font-weight: bold;">SERVICE CLIENT - CONTACTEZ-NOUS</h2>
+  <p>NOUS OFFRONS DES SERVICES DE LA PLUS HAUTE QUALITÉ</p>
+  <a href="/contact" style="background: #003366; color: white; padding: 12px 25px; text-decoration: none; margin-top: 20px; display: inline-block; border-radius: 5px;">
+    CONTACTEZ NOUS
+  </a>
+</section>
+{% endblock %}

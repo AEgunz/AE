@@ -1,0 +1,42 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+<section style="max-width: 1000px; margin: 40px auto; font-family: Arial, sans-serif;">
+  <h2 style="text-align: center; font-size: 28px;">Contactez-nous pour un devis, de l’aide ou pour rejoindre l’équipe.</h2>
+  <h1 style="text-align: center; font-size: 36px; color: #4A7BAE; margin-bottom: 40px;">Contact Us</h1>
+
+  <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px;">
+    <!-- Contact Form -->
+    <form method="post" action="{% url 'store:contact' %}" style="flex: 1 1 48%;">
+      {% csrf_token %}
+      <div style="display: flex; gap: 10px;">
+        <input type="text" name="first_name" placeholder="First name *" required style="flex: 1;" />
+        <input type="text" name="last_name" placeholder="Name *" required style="flex: 1;" />
+      </div>
+      <input type="email" name="email" placeholder="E-mail *" required style="width: 100%; margin-top: 10px;" />
+      <input type="text" name="phone" placeholder="Phone *" required style="width: 100%; margin-top: 10px;" />
+      <textarea name="message" placeholder="Message" rows="5" style="width: 100%; margin-top: 10px;"></textarea>
+      <button type="submit" style="margin-top: 15px; background-color: #007bff; color: white; padding: 10px 20px; border: none;">SEND</button>
+    </form>
+
+    <!-- Info & Map -->
+    <div style="flex: 1 1 48%;">
+      <iframe src="https://www.google.com/maps/embed?pb=..." width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+
+      <h2 style="margin-top: 20px; color: #4A7BAE;">AE Piscine </h2>
+      <p>📍 Hay IZDIHAR 2 BLOC 2 NR 23 </p>
+      <p>📞 +212 600 00 00 00</p>
+      <p>📧 ayoub.drf@gmail.com</p>
+    </div>
+  </div>
+</section>
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}
