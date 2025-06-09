@@ -382,22 +382,21 @@
             top: 0;
         }
         
-        /* For desktop hover behavior */
-        @media (min-width: 769px) {
+        
+        
+        @media (min-width: 1130px) {
+            .nav-item-dropdown:hover > .dropdown-menu {
+                display: block;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
             .category-menu-item.has-submenu:hover > .submenu {
                 display: block;
                 opacity: 1;
                 transform: translateX(0);
             }
         }
-        
-        /* For desktop click behavior */
-        .category-menu-item.has-submenu.open > .submenu {
-            display: block;
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
         /* Arrow styling */
         .category-menu-item .arrow {
             margin-left: auto;
@@ -793,6 +792,19 @@
             .logo-carousel-item { padding: 0 10px; }
         }
 
+        .desktop-hidden {
+            display: none;
+        }
+
+        @media (max-width: 1129px) {
+            .desktop-hidden {
+                display: block;
+            }
+            .mobile-hidden {
+                display: none;
+            }
+        }
+
         /* Styles for the "fly to cart" animation */
         .fly-to-cart-item {
             position: fixed;
@@ -1178,11 +1190,27 @@
             </li>
             {% endif %}
 
-            <a href="{% url 'store:about_us' %}">About Us</a>
+            <li><a href="{% url 'store:about_us' %}">About Us</a></li>
             <li><a href="{% url 'store:contact' %}">Contact</a></li>
             
-            <li class="nav-item-dropdown">
-                <a href="#" class="nav-item-label">Register <span class="dropdown-arrow">&#9662;</span></a>
+            <div class="desktop-hidden">
+                <li class="nav-item-dropdown">
+                    <a href="#" class="nav-item-label">Register <span class="dropdown-arrow">&#9662;</span></a>
+                    <ul class="dropdown-menu">
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'store:profile' %}">My Profile ({{ user.username }})</a></li>
+                            <li><a href="{% url 'account_logout' %}">Logout</a></li>
+                        {% else %}
+                            <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+                            <li><a href="{% url 'account_login' %}">Login</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+            </div>
+            <li class="nav-item-dropdown mobile-hidden">
+                <a href="#" class="nav-item-label" style="padding-top: 15px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </a>
                 <ul class="dropdown-menu">
                     {% if user.is_authenticated %}
                         <li><a href="{% url 'store:profile' %}">My Profile ({{ user.username }})</a></li>
@@ -1410,11 +1438,12 @@
                 });
             }
             
-            // Handle top-level dropdown toggles
+
+            // Handle top-level dropdown toggles for mobile
             document.querySelectorAll('.main-nav .nav-item-dropdown > a, .main-nav .nav-item-dropdown > .nav-item-label').forEach(item => {
                 item.addEventListener('click', function(event) {
-                    if (window.innerWidth <= 768 && this.parentElement.classList.contains('nav-item-dropdown')) {
-                        if (this.getAttribute('href') === '#') { 
+                    if (window.innerWidth <= 1129 && this.parentElement.classList.contains('nav-item-dropdown')) {
+                        if (this.getAttribute('href') === '#') {
                              event.preventDefault();
                         }
                         // Toggle dropdown visibility on mobile
@@ -1426,44 +1455,25 @@
                 });
             });
 
-            // Handle submenu toggles for both mobile and desktop
+            // Handle submenu toggles for mobile
             document.querySelectorAll('.category-menu-item.has-submenu > a').forEach(anchor => {
                 anchor.addEventListener('click', function(event) {
-                    event.preventDefault(); // Prevent navigation for parent categories with submenus
-                    
-                    const parentLi = this.closest('.category-menu-item.has-submenu');
-                    const submenu = parentLi.querySelector('.submenu');
-                    
-                    if (window.innerWidth <= 768) { // Mobile behavior
+                    if (window.innerWidth <= 1129) { // Mobile behavior
+                        event.preventDefault(); // Prevent navigation for parent categories with submenus on mobile
+                        
+                        const parentLi = this.closest('.category-menu-item.has-submenu');
+                        const submenu = parentLi.querySelector('.submenu');
+                        
                         if (submenu) {
-                            // Toggle the open class
+                            // Toggle the open class for arrow rotation
                             parentLi.classList.toggle('open');
                             
                             // Toggle display style directly for immediate effect
                             submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
                         }
-                    } else { // Desktop behavior
-                        if (submenu) {
-                            // Check if this submenu is already open
-                            const isOpen = submenu.style.display === 'block';
-                            
-                            // Close all other open submenus at the same level
-                            const siblingItems = parentLi.parentNode.querySelectorAll(':scope > .category-menu-item.has-submenu');
-                            siblingItems.forEach(item => {
-                                if (item !== parentLi) {
-                                    const siblingSubmenu = item.querySelector('.submenu');
-                                    if (siblingSubmenu) {
-                                        item.classList.remove('open');
-                                        siblingSubmenu.style.display = 'none';
-                                    }
-                                }
-                            });
-                            
-                            // Toggle this submenu
-                            parentLi.classList.toggle('open', !isOpen);
-                            submenu.style.display = isOpen ? 'none' : 'block';
-                        }
                     }
+                    // On desktop (innerWidth > 1129), this listener does nothing,
+                    // allowing the default link behavior and CSS :hover effects to work.
                 });
             });
 

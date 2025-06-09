@@ -1,6 +1,6 @@
 {# This snippet expects a 'category_item' from the parent loop #}
 <li class="category-menu-item {% if category_item.children.all %}has-submenu{% endif %}" style="border-bottom: 1px solid #e0e0e0;">
-    <a href="{% if category_item.children.all %}#{% else %}{% url 'store:category_detail' slug=category_item.slug %}{% endif %}" class="category-menu-link">
+    <a href="{% url 'store:category_detail' slug=category_item.slug %}" class="category-menu-link">
         {% if category_item.image %}
             <img src="{{ category_item.image.url }}" alt="{{ category_item.name }}" class="category-icon">
         {% else %}
