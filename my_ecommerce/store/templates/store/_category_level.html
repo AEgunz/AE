@@ -1,18 +1,21 @@
 {# This snippet expects a 'category_item' from the parent loop #}
-<li class="{% if category_item.children.all %}nav-item-dropdown has-submenu{% endif %}" style="display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 5px;">
-    <div style="display: flex; align-items: center; width: 100%;">
+<li class="category-menu-item {% if category_item.children.all %}has-submenu{% endif %}" style="border-bottom: 1px solid #e0e0e0;">
+    <a href="{% if category_item.children.all %}#{% else %}{% url 'store:category_detail' slug=category_item.slug %}{% endif %}" class="category-menu-link">
         {% if category_item.image %}
-            <img src="{{ category_item.image.url }}" alt="{{ category_item.name }}" style="width: 30px; height: 30px; object-fit: cover; margin-right: 8px; border-radius: 4px;">
+            <img src="{{ category_item.image.url }}" alt="{{ category_item.name }}" class="category-icon">
+        {% else %}
+            <div class="category-icon-placeholder">
+                <span>{{ category_item.name|slice:":1" }}</span>
+            </div>
         {% endif %}
-        <a href="{% url 'store:category_detail' slug=category_item.slug %}">{{ category_item.name }}</a>
-        
-            {% if category_item.children.all %}
-                <span class="dropdown-arrow-submenu" style="font-size: 0.8em; margin-left: 5px;">&#9656;</span>
-            {% endif %}
-        </a>
-    </div>
+        <span class="category-name">{{ category_item.name }}</span>
+        {% if category_item.children.all %}
+            <span class="arrow">&#9656;</span>
+        {% endif %}
+    </a>
+    
     {% if category_item.children.all %}
-        <ul class="dropdown-menu submenu" style="padding-left: 20px; list-style-type: none; width: 100%;">
+        <ul class="submenu">
             {% for child_category in category_item.children.all %}
                 {% include "store/_category_level.html" with category_item=child_category %}
             {% endfor %}

@@ -1,0 +1,68 @@
+<div class="category-menu">
+    <div class="category-menu-header">
+        <div class="menu-title">MENU</div>
+        <div class="menu-title categories-title">CATEGORIES</div>
+    </div>
+    <ul class="category-menu-list">
+        {% for category in all_categories %}
+            {% if not category.parent %}
+                <li class="category-menu-item {% if category.children.all %}has-submenu{% endif %}">
+                    <a href="{% if category.children.all %}#{% else %}{% url 'store:category_detail' slug=category.slug %}{% endif %}" class="category-menu-link">
+                        {% if category.image %}
+                            <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-icon">
+                        {% else %}
+                            <div class="category-icon-placeholder">
+                                <span>{{ category.name|slice:":1" }}</span>
+                            </div>
+                        {% endif %}
+                        <span class="category-name">{{ category.name|upper }}</span>
+                        {% if category.children.all %}
+                            <span class="arrow">&#9656;</span>
+                        {% endif %}
+                    </a>
+                    
+                    {% if category.children.all %}
+                        <ul class="submenu">
+                            {% for subcategory in category.children.all %}
+                                <li class="category-menu-item {% if subcategory.children.all %}has-submenu{% endif %}">
+                                    <a href="{% if subcategory.children.all %}#{% else %}{% url 'store:category_detail' slug=subcategory.slug %}{% endif %}" class="category-menu-link">
+                                        {% if subcategory.image %}
+                                            <img src="{{ subcategory.image.url }}" alt="{{ subcategory.name }}" class="category-icon">
+                                        {% else %}
+                                            <div class="category-icon-placeholder">
+                                                <span>{{ subcategory.name|slice:":1" }}</span>
+                                            </div>
+                                        {% endif %}
+                                        <span class="category-name">{{ subcategory.name|upper }}</span>
+                                        {% if subcategory.children.all %}
+                                            <span class="arrow">&#9656;</span>
+                                        {% endif %}
+                                    </a>
+                                    
+                                    {% if subcategory.children.all %}
+                                        <ul class="submenu">
+                                            {% for subsubcategory in subcategory.children.all %}
+                                                <li class="category-menu-item">
+                                                    <a href="{% url 'store:category_detail' slug=subsubcategory.slug %}" class="category-menu-link">
+                                                        {% if subsubcategory.image %}
+                                                            <img src="{{ subsubcategory.image.url }}" alt="{{ subsubcategory.name }}" class="category-icon">
+                                                        {% else %}
+                                                            <div class="category-icon-placeholder">
+                                                                <span>{{ subsubcategory.name|slice:":1" }}</span>
+                                                            </div>
+                                                        {% endif %}
+                                                        <span class="category-name">{{ subsubcategory.name|upper }}</span>
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</div>

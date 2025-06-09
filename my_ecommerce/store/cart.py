@@ -26,9 +26,17 @@ class Cart:
         actual_variation_id = str(variation_id) if variation_id else None
         cart_item_id = self._generate_cart_item_id(product_id, actual_variation_id)
         
-        # Determine price - for now, use base product price.
-        # Later, this could check variation.additional_price if that model field exists.
+        # Determine price - use base product price plus additional_price if variation is selected
         item_price = product.price
+        
+        # If a variation is selected, add its additional_price to the base price
+        if actual_variation_id:
+            try:
+                variation = ProductVariation.objects.get(id=actual_variation_id)
+                if variation.additional_price:
+                    item_price += variation.additional_price
+            except ProductVariation.DoesNotExist:
+                pass  # If variation doesn't exist, use base product price
 
         if cart_item_id not in self.cart:
             self.cart[cart_item_id] = {

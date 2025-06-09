@@ -5,7 +5,31 @@
 
 {% block content %}
 <div class="main-content-area">
-    <h1 class="page-title">Search Results for: "{{ query }}"</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1 class="page-title" style="margin: 0;">Search Results for: "{{ query }}"</h1>
+        
+        {% if form and results %}
+        <!-- Desktop filter button -->
+        <button id="filter-button" class="filter-button desktop-filter-button" style="padding: 10px 15px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; align-items: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 5px;">
+                <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+            </svg>
+            Filter Products
+        </button>
+        {% endif %}
+    </div>
+    
+    {% if form and results %}
+    <!-- Mobile filter button (hidden on desktop) -->
+    <div class="mobile-filter-button" style="display: none; margin-bottom: 20px; text-align: center;">
+        <button id="mobile-filter-button" style="padding: 10px 15px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 5px;">
+                <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+            </svg>
+            Filter Products
+        </button>
+    </div>
+    {% endif %}
 
     {% if results %}
         <div class="product-grid">
@@ -15,7 +39,7 @@
                         {% if product.image %}
                             <img src="{{ product.image.url }}" alt="{{ product.name }}">
                         {% else %}
-                            <img src="{% static 'path/to/default-image.png' %}" alt="Default product image">
+                            <img src="https://via.placeholder.com/250x200.png?text=No+Image" alt="Default product image">
                         {% endif %}
                         <h2>{{ product.name }}</h2>
                     </a>
@@ -25,7 +49,19 @@
                          <p>{{ product.description|truncatewords:15 }}</p>
                     {% endif %}
 
-                    <div class="price">{{ product.price }} MAD</div>
+                    <div class="price-container">
+                        {% if product.old_price and product.old_price > product.price %}
+                            <p class="price" style="font-size: 1.1em; font-weight: bold; color: #27ae60; margin-bottom: 5px;">
+                                {{ product.price }} MAD 
+                                <span style="text-decoration: line-through; color: #999; font-size: 0.8em; margin-left: 5px;">{{ product.old_price }} MAD</span>
+                                <span style="background-color: #e74c3c; color: white; font-size: 0.6em; padding: 2px 4px; border-radius: 3px; margin-left: 5px; vertical-align: middle;">
+                                    -{{ product.discount_percentage }}%
+                                </span>
+                            </p>
+                        {% else %}
+                            <p class="price" style="font-size: 1.1em; font-weight: bold; color: #27ae60;">{{ product.price }} MAD</p>
+                        {% endif %}
+                    </div>
 
                     <form action="{% url 'store:cart_add' product.id %}" method="post" class="add-to-cart-form">
                         {% csrf_token %}
@@ -33,7 +69,12 @@
                             <select name="variation_id" class="product-variation-select" style="margin-bottom: 10px; padding: 5px; border-radius: 4px; border: 1px solid #ccc; width: 100%;">
                                 <option value="">Select Variation</option>
                                 {% for variation in product.variations.all %}
-                                    <option value="{{ variation.id }}">{{ variation.color_name }} (+{{ variation.additional_price }} MAD)</option>
+                                    <option value="{{ variation.id }}">
+                                        {{ variation.color_name }}
+                                        {% if variation.additional_price > 0 %}
+                                            ({{ product.price|add:variation.additional_price }} MAD)
+                                        {% endif %}
+                                    </option>
                                 {% endfor %}
                             </select>
                         {% endif %}
@@ -47,4 +88,213 @@
         <p style="text-align: center; font-size: 1.2em; margin-top: 30px;">No products found matching your search for "{{ query }}".</p>
     {% endif %}
 </div>
+
+<!-- Filter Modal -->
+{% if form %}
+<div id="filter-modal" class="filter-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div class="filter-modal-content" style="background-color: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative;">
+        <button id="close-modal" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5em; cursor: pointer; color: #666;">&times;</button>
+        
+        <h3 style="margin-bottom: 15px; color: #3498db; font-size: 1.2em; border-bottom: 2px solid #3498db; padding-bottom: 8px;">Filter Products</h3>
+        
+        <form method="get" style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <!-- Keep the search query -->
+            <input type="hidden" name="q" value="{{ query }}">
+            
+            <!-- Price Range -->
+            <div class="filter-group" style="margin-bottom: 20px;">
+                <h4 style="margin-bottom: 8px; color: #333; font-size: 1em;">Price Range</h4>
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label for="{{ form.min_price.id_for_label }}" style="display: block; margin-bottom: 5px; font-size: 0.9em; color: #666;">Min</label>
+                        {{ form.min_price }}
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="{{ form.max_price.id_for_label }}" style="display: block; margin-bottom: 5px; font-size: 0.9em; color: #666;">Max</label>
+                        {{ form.max_price }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Category -->
+            <div class="filter-group" style="margin-bottom: 20px;">
+                <label for="{{ form.category.id_for_label }}" style="display: block; margin-bottom: 5px; font-size: 0.9em; color: #666; font-weight: 600;">Category</label>
+                {{ form.category }}
+            </div>
+            
+            <!-- Color -->
+            <div class="filter-group" style="margin-bottom: 20px;">
+                <label for="{{ form.color.id_for_label }}" style="display: block; margin-bottom: 5px; font-size: 0.9em; color: #666; font-weight: 600;">Color</label>
+                {{ form.color }}
+            </div>
+            
+            <!-- Size -->
+            <div class="filter-group" style="margin-bottom: 20px;">
+                <label for="{{ form.size.id_for_label }}" style="display: block; margin-bottom: 5px; font-size: 0.9em; color: #666; font-weight: 600;">Size</label>
+                {{ form.size }}
+            </div>
+            
+            <!-- Brand -->
+            <div class="filter-group" style="margin-bottom: 20px;">
+                <label for="{{ form.brand.id_for_label }}" style="display: block; margin-bottom: 5px; font-size: 0.9em; color: #666; font-weight: 600;">Brand</label>
+                {{ form.brand }}
+            </div>
+            
+            <!-- Rating -->
+            <div class="filter-group" style="margin-bottom: 20px;">
+                <label for="{{ form.rating.id_for_label }}" style="display: block; margin-bottom: 5px; font-size: 0.9em; color: #666; font-weight: 600;">Rating</label>
+                {{ form.rating }}
+            </div>
+            
+            <!-- Sort By -->
+            <div class="filter-group" style="margin-bottom: 20px;">
+                <label for="{{ form.order_by.id_for_label }}" style="display: block; margin-bottom: 5px; font-size: 0.9em; color: #666; font-weight: 600;">Sort By</label>
+                {{ form.order_by }}
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                <button type="submit" style="padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                    🔍 Apply Filters
+                </button>
+                <a href="{% url 'store:search_view' %}?q={{ query }}" style="padding: 8px; background-color: #e0e0e0; color: #333; border: none; border-radius: 4px; text-decoration: none; font-size: 0.9em; text-align: center;">
+                    Clear Filters
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const desktopFilterButton = document.getElementById('filter-button');
+        const mobileFilterButton = document.getElementById('mobile-filter-button');
+        const filterModal = document.getElementById('filter-modal');
+        const closeModal = document.getElementById('close-modal');
+        
+        // Function to show modal
+        function showModal() {
+            filterModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
+        }
+        
+        // Show modal when desktop filter button is clicked
+        if (desktopFilterButton) {
+            desktopFilterButton.addEventListener('click', showModal);
+        }
+        
+        // Show modal when mobile filter button is clicked
+        if (mobileFilterButton) {
+            mobileFilterButton.addEventListener('click', showModal);
+        }
+        
+        // Close modal when close button is clicked
+        if (closeModal) {
+            closeModal.addEventListener('click', function() {
+                filterModal.style.display = 'none';
+                document.body.style.overflow = 'auto'; // Restore scrolling
+            });
+        }
+        
+        // Close modal when clicking outside the modal content
+        if (filterModal) {
+            filterModal.addEventListener('click', function(event) {
+                if (event.target === filterModal) {
+                    filterModal.style.display = 'none';
+                    document.body.style.overflow = 'auto'; // Restore scrolling
+                }
+            });
+        }
+    });
+</script>
+{% endif %}
+
+<style>
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .product-card {
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .product-card img {
+        max-width: 100%;
+        height: 200px;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border-radius: 4px;
+    }
+    
+    .product-card h2 {
+        font-size: 1.2em;
+        color: #3498db;
+        margin-bottom: 8px;
+        min-height: 2.4em;
+    }
+    
+    .product-card p {
+        font-size: 0.9em;
+        color: #333;
+        line-height: 1.5;
+        margin-bottom: 12px;
+    }
+    
+    .product-card .price {
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #27ae60;
+        margin-top: 10px;
+    }
+    
+    .btn-add-to-cart {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        margin-top: 10px;
+    }
+    
+    .filter-button:hover {
+        background-color: #2980b9;
+    }
+    
+    /* Animation for modal */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .filter-modal {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .filter-modal-content {
+            width: 95%;
+            max-width: none;
+        }
+        
+        .desktop-filter-button {
+            display: none !important;
+        }
+        
+        .mobile-filter-button {
+            display: block !important;
+        }
+    }
+</style>
 {% endblock %}

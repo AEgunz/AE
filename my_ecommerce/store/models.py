@@ -8,6 +8,8 @@ from django.dispatch import receiver
 
 import os
 
+# This class is not used and should be removed
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -47,9 +49,11 @@ class Product(models.Model):
     category = models.ForeignKey(Category, related_name='products', on_delete=models.SET_NULL, null=True, blank=True) # Added category
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=220, unique=True, blank=True) # Added slug
+    brand = models.CharField(max_length=100, blank=True, null=True, help_text="Brand of the product.")
     short_description = models.TextField(blank=True, null=True, help_text="A brief summary shown on product detail page under the title.") # Changed to TextField
     description = models.TextField(help_text="Full product description.")
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    old_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Old price for discounts
     image = models.ImageField(upload_to='products/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -77,6 +81,14 @@ class Product(models.Model):
             storage.delete(path)
         else:
             super().delete(*args, **kwargs)
+    
+    def has_discount(self):
+        return self.old_price and self.old_price > self.price
+
+    def discount_percentage(self):
+        if self.has_discount():
+            return round(100 * (self.old_price - self.price) / self.old_price)
+        return 0
     
 
 class SliderImage(models.Model):
@@ -190,23 +202,46 @@ class OrderItem(models.Model):
         return Decimal('0.00')
 
 class ProductVariation(models.Model):
+    SIZE_CHOICES = [
+        ('', 'No Size'),
+        ('S', 'Small'),
+        ('M', 'Medium'),
+        ('L', 'Large'),
+        ('XL', 'Extra Large'),
+    ]
+    
+    RATING_CHOICES = [
+        (0, 'No Rating'),
+        (1, '1 Star'),
+        (2, '2 Stars'),
+        (3, '3 Stars'),
+        (4, '4 Stars'),
+        (5, '5 Stars'),
+    ]
+    
     product = models.ForeignKey(Product, related_name='variations', on_delete=models.CASCADE)
     color_name = models.CharField(max_length=50, help_text="e.g., Red, Blue, Green")
-    image = models.ImageField(upload_to='products/variations/', null=True, blank=True, help_text="Image specific to this color variation.")
-    # Add other variation-specific fields if needed, e.g.:
-    # sku_suffix = models.CharField(max_length=50, blank=True, null=True)
-    # stock = models.PositiveIntegerField(default=0)
+    size = models.CharField(max_length=10, choices=SIZE_CHOICES, default='', blank=True, help_text="Size of the product variation.")
+    rating = models.IntegerField(choices=RATING_CHOICES, default=0, help_text="Rating of the product variation.")
+    image = models.ImageField(upload_to='products/variations/', null=True, blank=True, help_text="Image specific to this variation.")
     additional_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text="Price difference for this variation, if any.")
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ('product', 'color_name') # Ensure a product can't have the same color name twice
+        unique_together = ('product', 'color_name', 'size') # Ensure a product can't have the same variation twice
         verbose_name = "Product Variation"
         verbose_name_plural = "Product Variations"
-        ordering = ['product', 'color_name']
+        ordering = ['product', 'color_name', 'size']
 
     def __str__(self):
-        return f"{self.product.name} - {self.color_name}"
+        variation_parts = []
+        if self.color_name:
+            variation_parts.append(self.color_name)
+        if self.size:
+            variation_parts.append(f"Size: {self.size}")
+        
+        variation_str = " - ".join(variation_parts) if variation_parts else "Default"
+        return f"{self.product.name} - {variation_str}"
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='additional_images', on_delete=models.CASCADE)
@@ -222,6 +257,27 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.product.name} (Order: {self.order})"
+
+class ProductRating(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ratings')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='product_ratings', null=True, blank=True)
+    rating = models.IntegerField(choices=[(1, '1 Star'), (2, '2 Stars'), (3, '3 Stars'), (4, '4 Stars'), (5, '5 Stars')])
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    ip_address = models.GenericIPAddressField(blank=True, null=True)  # To track anonymous ratings
+
+    class Meta:
+        verbose_name = "Product Rating"
+        verbose_name_plural = "Product Ratings"
+        # Allow only one rating per user per product (if user is authenticated)
+        unique_together = ('product', 'user')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        if self.user:
+            return f"{self.product.name} - {self.rating} stars by {self.user.username}"
+        return f"{self.product.name} - {self.rating} stars by Anonymous"
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')

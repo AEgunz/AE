@@ -3,8 +3,10 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from .models import ContactMessage
-from .models import Product, SliderImage, MobileSliderImage, Category, LogoCarouselItem, DeliveryCity, Order, OrderItem, ProductVariation, ProductImage, UserProfile
+from .models import Product, SliderImage, MobileSliderImage, Category, LogoCarouselItem, DeliveryCity, Order, OrderItem, ProductVariation, ProductImage, UserProfile, ProductRating
 
+
+    
 class CategoryAdmin(admin.ModelAdmin): # New admin class for Category
     list_display = ('name', 'parent', 'slug', 'image_thumbnail', 'product_count')
     search_fields = ('name', 'description', 'parent__name')
@@ -26,23 +28,54 @@ class CategoryAdmin(admin.ModelAdmin): # New admin class for Category
 # Define Inlines first
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
-    extra = 3
+    extra = 5
     fields = ('image', 'alt_text', 'order')
     ordering = ('order',)
 
-class ProductVariationInline(admin.TabularInline):
+class ColorVariationInline(admin.TabularInline):
     model = ProductVariation
     extra = 1
-    fields = ('color_name', 'image', 'is_active')
+    fields = ('color_name', 'image', 'additional_price', 'is_active')
+    verbose_name = "Color Variation"
+    verbose_name_plural = "Color Variations"
+    
+    def get_queryset(self, request):
+        # Only show variations with color_name
+        qs = super().get_queryset(request)
+        return qs.filter(color_name__isnull=False).exclude(color_name='')
+
+class SizeVariationInline(admin.TabularInline):
+    model = ProductVariation
+    extra = 1
+    fields = ('size', 'additional_price', 'is_active')
+    verbose_name = "Size Variation"
+    verbose_name_plural = "Size Variations"
+    
+    def get_queryset(self, request):
+        # Only show variations with size
+        qs = super().get_queryset(request)
+        return qs.filter(size__isnull=False).exclude(size='')
+
+class RatingVariationInline(admin.TabularInline):
+    model = ProductVariation
+    extra = 1
+    fields = ('rating', 'additional_price', 'is_active')
+    verbose_name = "Rating Variation"
+    verbose_name_plural = "Rating Variations"
+    
+    def get_queryset(self, request):
+        # Only show variations with rating > 0
+        qs = super().get_queryset(request)
+        return qs.filter(rating__gt=0)
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'price', 'is_active', 'created_at')
-    list_filter = ('category', 'is_active', 'created_at')
+    list_display = ('name', 'brand', 'category', 'price', 'is_active', 'created_at')
+    list_filter = ('category', 'brand', 'is_active', 'created_at')
     list_editable = ('price', 'is_active')
-    search_fields = ('name', 'short_description', 'description', 'category__name')
+    search_fields = ('name', 'brand', 'short_description', 'description', 'category__name')
     prepopulated_fields = {'slug': ('name',)}
     ordering = ('-created_at',)
-    inlines = [ProductImageInline, ProductVariationInline] # Now these are defined
+    inlines = [ProductImageInline, ColorVariationInline, SizeVariationInline, RatingVariationInline] # Separate inlines for each variation type
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name == 'short_description':
@@ -135,6 +168,14 @@ admin.site.register(MobileSliderImage, MobileSliderImageAdmin)
 admin.site.register(LogoCarouselItem, LogoCarouselItemAdmin)
 admin.site.register(DeliveryCity, DeliveryCityAdmin)
 admin.site.register(Order, OrderAdmin)
+# Register ProductRating
+class ProductRatingAdmin(admin.ModelAdmin):
+    list_display = ('product', 'user', 'rating', 'created_at', 'ip_address')
+    list_filter = ('rating', 'created_at')
+    search_fields = ('product__name', 'user__username', 'comment')
+    readonly_fields = ('created_at', 'ip_address')
+
+admin.site.register(ProductRating, ProductRatingAdmin)
 admin.site.register(ContactMessage)
 # ProductImage is managed via ProductAdmin inline
 # ProductVariation is managed via ProductAdmin inline

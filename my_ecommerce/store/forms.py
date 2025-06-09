@@ -1,7 +1,94 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import UserProfile
+from .models import UserProfile, Category
+
+class ProductFilterForm(forms.Form):
+    min_price = forms.DecimalField(label='Min Price', required=False, min_value=0)
+    max_price = forms.DecimalField(label='Max Price', required=False, min_value=0)
+    
+    # Category filter - will be populated dynamically in the view
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.none(),  # Will be set in __init__
+        label='Category',
+        required=False,
+        empty_label="All Categories"
+    )
+    
+    # Color filter based on ProductVariation
+    color = forms.ChoiceField(
+        label='Color',
+        required=False,
+        choices=[('', 'All Colors')],  # Will be populated in __init__
+    )
+    
+    # Size filter (assuming sizes might be added in the future)
+    SIZE_CHOICES = [
+        ('', 'All Sizes'),
+        ('S', 'Small'),
+        ('M', 'Medium'),
+        ('L', 'Large'),
+        ('XL', 'Extra Large'),
+    ]
+    size = forms.ChoiceField(
+        label='Size',
+        required=False,
+        choices=SIZE_CHOICES,
+    )
+    
+    # Brand filter (assuming brands might be added in the future)
+    brand = forms.ChoiceField(
+        label='Brand',
+        required=False,
+        choices=[('', 'All Brands')],  # Will be populated in __init__
+    )
+    
+    # Rating filter
+    RATING_CHOICES = [
+        ('', 'All Ratings'),
+        ('5', '5 Stars'),
+        ('4', '4+ Stars'),
+        ('3', '3+ Stars'),
+        ('2', '2+ Stars'),
+        ('1', '1+ Star'),
+    ]
+    rating = forms.ChoiceField(
+        label='Rating',
+        required=False,
+        choices=RATING_CHOICES,
+    )
+    
+    order_by = forms.ChoiceField(
+        label='Sort By',
+        required=False,
+        choices=[
+            ('', '---------'),
+            ('price', 'Price: Low to High'),
+            ('-price', 'Price: High to Low'),
+            ('name', 'Name: A to Z'),
+            ('-name', 'Name: Z to A'),
+        ]
+    )
+    
+    def __init__(self, *args, **kwargs):
+        category_queryset = kwargs.pop('category_queryset', None)
+        color_choices = kwargs.pop('color_choices', None)
+        brand_choices = kwargs.pop('brand_choices', None)
+        
+        super().__init__(*args, **kwargs)
+        
+        # Set category queryset if provided
+        if category_queryset is not None:
+            self.fields['category'].queryset = category_queryset
+            
+        # Set color choices if provided
+        if color_choices is not None:
+            self.fields['color'].choices = [('', 'All Colors')] + color_choices
+            
+        # Set brand choices if provided
+        if brand_choices is not None:
+            self.fields['brand'].choices = [('', 'All Brands')] + brand_choices
+
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)

@@ -106,7 +106,19 @@
                             <p style="font-size: 0.8em; color: #777;">Category: {{ product.category.name }}</p>
                         {% endif %}
                         <p>{{ product.description|truncatewords:15 }}</p>
-                        <p class="price">{{ product.price }} DH</p>
+                        <div class="price-container">
+                            {% if product.old_price and product.old_price > product.price %}
+                                <p class="price" style="font-size: 1.2em; color: var(--price-color, #27ae60); margin-bottom: 5px;">
+                                    {{ product.price }} DH 
+                                    <span style="text-decoration: line-through; color: #999; font-size: 0.8em; margin-left: 5px;">{{ product.old_price }} DH</span>
+                                    <span style="background-color: #e74c3c; color: white; font-size: 0.6em; padding: 2px 4px; border-radius: 3px; margin-left: 5px; vertical-align: middle;">
+                                        -{{ product.discount_percentage }}%
+                                    </span>
+                                </p>
+                            {% else %}
+                                <p class="price" style="font-size: 1.2em; color: var(--price-color, #27ae60);">{{ product.price }} DH</p>
+                            {% endif %}
+                        </div>
                         <form action="{% url 'store:cart_add' product.id %}" method="post" style="margin-top: auto;" class="add-to-cart-form">
                             {% csrf_token %}
                             <button type="submit" class="btn-add-to-cart">Add to Cart</button>

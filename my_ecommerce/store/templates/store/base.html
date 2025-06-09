@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}AE Store{% endblock %}</title>
     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/easyzoom/2.5.0/easyzoom.css" />
+    <!-- Using Fancybox for image zoom instead of EasyZoom to avoid MIME type mismatch errors -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
     <style>
         :root {
             --primary-bg: #f4f7f6;
@@ -54,6 +55,54 @@
             font-weight: bold;
         }
         /* End of Auth Form Styles */
+
+        /* Form Field Styles */
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 16px;
+            padding-right: 30px;
+        }
+
+        /* Filter Form Specific Styles */
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .filter-group input[type="number"] {
+            text-align: center;
+        }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -204,17 +253,18 @@
             position: absolute;
             top: 100%;
             left: 0;
-            background-color: var(--nav-dropdown-bg);
+            background-color: #ffffff;
             list-style: none;
-            padding: 8px 0;
+            padding: 0;
             margin: 0;
-            min-width: 200px;
+            min-width: 250px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.1);
             z-index: 1000;
             border-radius: 8px;
             opacity: 0;
             transform: translateY(10px);
             transition: opacity 0.3s ease, transform 0.3s ease;
+            overflow: hidden;
         }
         
         .main-nav li:hover > .dropdown-menu {
@@ -223,44 +273,140 @@
             transform: translateY(0);
         }
         
-        .main-nav .dropdown-menu li {
+        /* New Category Menu Styling - Based on the image */
+        .category-menu {
             width: 100%;
-            position: relative;
+            max-width: 300px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
-        .main-nav .dropdown-menu a {
-            color: var(--nav-dropdown-text);
-            padding: 10px 20px;
-            display: block;
-            white-space: nowrap;
-            font-size: 0.95em;
-            transition: all 0.2s ease;
+        .category-menu-header {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
         }
         
-        .main-nav .dropdown-menu a:hover {
-            background-color: var(--nav-dropdown-hover-bg);
-            padding-left: 25px;
+        .menu-title {
+            flex: 1;
+            padding: 12px 15px;
+            text-align: center;
+            font-weight: 600;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        .categories-title {
+            background-color: #ffffff;
+            border-left: 1px solid #e0e0e0;
+        }
+        
+        .category-menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .category-menu-item {
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .category-menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .category-menu-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: background-color 0.2s ease;
+        }
+        
+        .category-menu-link:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .category-icon, .category-icon-placeholder {
+            width: 30px;
+            height: 30px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .category-icon {
+            object-fit: cover;
+        }
+        
+        .category-icon-placeholder {
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        
+        .category-name {
+            flex-grow: 1;
         }
         
         /* Submenu Styles */
-        .main-nav .dropdown-menu .submenu {
+        .submenu {
             display: none;
             position: absolute;
             left: 100%;
             top: 0;
-            background-color: var(--nav-dropdown-bg);
-            min-width: 200px;
+            background-color: #ffffff;
+            min-width: 250px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.1);
             border-radius: 8px;
             opacity: 0;
             transform: translateX(10px);
             transition: opacity 0.3s ease, transform 0.3s ease;
+            overflow: hidden;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            z-index: 1001;
         }
         
-        .main-nav .dropdown-menu li:hover > .submenu {
+        /* Desktop submenu behavior */
+        .category-menu-item.has-submenu > .submenu {
+            position: absolute;
+            left: 100%;
+            top: 0;
+        }
+        
+        /* For desktop hover behavior */
+        @media (min-width: 769px) {
+            .category-menu-item.has-submenu:hover > .submenu {
+                display: block;
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* For desktop click behavior */
+        .category-menu-item.has-submenu.open > .submenu {
             display: block;
             opacity: 1;
             transform: translateX(0);
+        }
+        
+        /* Arrow styling */
+        .category-menu-item .arrow {
+            margin-left: auto;
+            font-size: 0.8em;
+            transition: transform 0.2s ease;
+        }
+        
+        .category-menu-item.open > a .arrow {
+            transform: rotate(90deg);
         }
         
         .main-nav .dropdown-arrow-submenu {
@@ -320,7 +466,7 @@
         /* Main content area styling */
         .main-content-area {
             flex: 1; padding: 20px; width: 100%;
-            max-width: 1200px; margin: 0 auto; box-sizing: border-box;
+            max-width: 1722px; margin: 0 auto; box-sizing: border-box;
         }
          h1.page-title {
             color: var(--header-bg); text-align: center; margin-top: 0;
@@ -534,7 +680,7 @@
             .main-nav .dropdown-menu { /* This is the main categories dropdown */
                 display: block;
                 position: static;
-                background-color: transparent;
+                background-color: #ffffff;
                 box-shadow: none;
                 min-width: auto;
                 border-radius: 0;
@@ -542,11 +688,11 @@
                 opacity: 1;
                 transform: none;
             }
-            .main-nav .dropdown-menu .submenu { /* Submenus within the mobile nav */
+            .submenu { /* Submenus within the mobile nav */
                 display: none; /* Hidden by default, toggled by JS */
                 position: static !important; /* Override absolute positioning */
-                padding-left: 20px; /* Indent submenus */
-                background-color: rgba(0,0,0,0.1); /* Slightly different bg for visual hierarchy */
+                padding-left: 0; /* No indent for submenus */
+                background-color: #f5f5f5; /* Slightly different bg for visual hierarchy */
                 box-shadow: none;
                 border-radius: 0;
                 opacity: 1;
@@ -841,6 +987,8 @@
             }
         }
 
+        
+
         @media (max-width: 480px) {
             header .store-name {
                  margin-right: 5px;
@@ -875,85 +1023,197 @@
             padding: 0px 8px;
             }
 
-        
 
-                            
-    </style>
-</head>
-<body>
-<header style="
-    padding-left: 20px;
-    padding-right: 20px;
-    height: 60px;
-    padding-top: 10px;
-">
-  <div class="store-name">
-        <img src="{% static 'media/logo/logoae.png' %}" alt="شعار المتجر" style="height: 70px;">
-    </div>
 
-    <!-- ✅ صندوق البحث -->
-    <div class="search-box">
-        <form method="GET" action="/search/">
-            <input type="text" name="q" placeholder="Rechercher" />
-            <button type="submit">🔍</button>
-        </form>
-    </div>
 
-    <button class="nav-toggle" aria-label="toggle navigation" aria-expanded="false">
-        <span class="hamburger"></span>
-    </button>
-    <ul class="main-nav">
-        <li><a href="{% url 'store:home' %}">Home</a></li>
+    /* Element | http://127.0.0.1:8002/product/Bestway-gonflable/ */
 
-        {% if all_categories %}
-        <li class="nav-item-dropdown">
-            <a href="#" class="nav-item-label">Categories <span class="dropdown-arrow">&#9662;</span></a>
-            <ul class="dropdown-menu">
-                {% for category_item in all_categories %}
-                    {% if not category_item.parent %}
-                        {% include "store/_category_level.html" with category_item=category_item %}
+    .full-description-section {
+    box-sizing: content-box;
+    width: auto;
+    height: auto;
+    margin-left: -368px;
+    }
+
+    /* Element | http://127.0.0.1:8002/product/Bestway-gonflable/ */
+
+    .product-image-section {
+    height: 551px;
+    }
+
+    /* Element | http://127.0.0.1:8002/product/Bestway-gonflable/ */
+
+    .product-info-section > hr:nth-child(8) {
+    width: 400px;
+    height: -1px;
+    }
+
+    /* Element | http://127.0.0.1:8002/product/Bestway-gonflable/ */
+
+    .rating-form-section {
+    width: 715px;
+    height: 380.367px;
+    
+    }
+
+    .product-image-section {
+        height: auto;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .product-info-section > hr:nth-child(8) {
+        width: 100%;
+    }
+
+    .rating-form-section {
+        margin-left: auto;
+        margin-right: auto;
+        margin-left: -380px;
+        padding: 10px;
+    }
+
+    
+
+    /* Inline | http://91.108.102.225:8000/ */
+
+    @media (max-width: 1130px) {
+    .category-card {
+        /* padding: 8px; */
+        padding: 22px;
+        width: 155px;
+    }
+    .category-card img {
+        /* width: 60px; */
+        /* height: 60px; */
+        /* border-radius: 50%; */
+        width: 149px;
+        height: 85px;
+        border-radius: 8%;
+    }
+    .category-card h3 {
+        /* margin: 5px 0 0 0; */
+        margin: 4px 0 0 0;
+    }
+        .full-description-section {
+        width: auto;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 10px;
+    }
+
+    .rating-form-section {
+    width: auto;
+    height: auto;
+    }
+    .rating-form-section {
+        margin-left: auto;
+        margin-right: auto;
+        margin-left: auto;
+        padding: auto;
+    }
+
+
+
+    @media (max-width: 1129px) {
+    .category-grid {
+        font-size: 0.9em;
+        gap: 15px;
+        padding: 10px 10px;
+    }
+    }
+    .rating-form-section {
+    width: auto;
+    height: auto;
+    }
+    .rating-form-section {
+        margin-left: auto;
+        margin-right: auto;
+        margin-left: auto;
+        padding: auto;
+    }
+    
+
+    }  
+
+</style>
+
+    </head>
+    <body>
+    <header style="
+        padding-left: 20px;
+        padding-right: 20px;
+        height: 60px;
+        padding-top: 10px;
+    ">
+    <div class="store-name">
+            <img src="{% static 'media/logo/logoae.png' %}" alt="شعار المتجر" style="height: 70px;">
+        </div>
+
+
+        <!-- ✅ صندوق البحث -->
+        <div class="search-box">
+            <form method="GET" action="/search/">
+                <input type="text" name="q" placeholder="Rechercher" />
+                <button type="submit">🔍</button>
+            </form>
+        </div>
+
+        <button class="nav-toggle" aria-label="toggle navigation" aria-expanded="false">
+            <span class="hamburger"></span>
+        </button>
+        <ul class="main-nav">
+            <li><a href="{% url 'store:home' %}">Home</a></li>
+
+            {% if all_categories %}
+            <li class="nav-item-dropdown">
+                <a href="#" class="nav-item-label">Categories <span class="dropdown-arrow">&#9662;</span></a>
+                <ul class="dropdown-menu">
+                    {% for category_item in all_categories %}
+                        {% if not category_item.parent %}
+                            {% include "store/_category_level.html" with category_item=category_item %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </li>
+            {% endif %}
+
+            <a href="{% url 'store:about_us' %}">About Us</a>
+            <li><a href="{% url 'store:contact' %}">Contact</a></li>
+            
+            <li class="nav-item-dropdown">
+                <a href="#" class="nav-item-label">Register <span class="dropdown-arrow">&#9662;</span></a>
+                <ul class="dropdown-menu">
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'store:profile' %}">My Profile ({{ user.username }})</a></li>
+                        <li><a href="{% url 'account_logout' %}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+                        <li><a href="{% url 'account_login' %}">Login</a></li>
                     {% endif %}
-                {% endfor %}
-            </ul>
-        </li>
-        {% endif %}
-
-        <a href="{% url 'store:about_us' %}">About Us</a>
-        <li><a href="{% url 'store:contact' %}">Contact</a></li>
-        
-        <li class="nav-item-dropdown">
-            <a href="#" class="nav-item-label">Register <span class="dropdown-arrow">&#9662;</span></a>
-            <ul class="dropdown-menu">
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'store:profile' %}">My Profile ({{ user.username }})</a></li>
-                    <li><a href="{% url 'account_logout' %}">Logout</a></li>
-                {% else %}
-                    <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
-                    <li><a href="{% url 'account_login' %}">Login</a></li>
-                {% endif %}
-            </ul>
-        </li>
-        <li>
-            <a href="{% url 'store:cart_detail' %}" id="cart-icon-link" style="display: flex; align-items: center;">
-                <svg class="cart-icon-svg" viewBox="0 0 24 24" style="width: 22px; height: 22px; fill: currentColor; margin-right: 5px;">
-                    <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-                </svg>
-                {% if cart|length > 0 %}
-                    <span class="cart-count">{{ cart|length }}</span>
-                {% else %}
-                    <span class="cart-count">0</span>
-                {% endif %}
-            </a>
-        </li>
-    </ul>
-</header>
+                </ul>
+            </li>
+            <li>
+                <a href="{% url 'store:cart_detail' %}" id="cart-icon-link" style="display: flex; align-items: center;">
+                    <svg class="cart-icon-svg" viewBox="0 0 24 24" style="width: 22px; height: 22px; fill: currentColor; margin-right: 5px;">
+                        <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                    </svg>
+                    {% if cart|length > 0 %}
+                        <span class="cart-count">{{ cart|length }}</span>
+                    {% else %}
+                        <span class="cart-count">0</span>
+                    {% endif %}
+                </a>
+            </li>
+        </ul>
+    </header>
 
 
         <div class="main-content-area"> {# Renamed main to main-content-area for base template #}
             {% block content %}
             {% endblock %}
         </div>
-
+</style>
 
             <style>
                 .petit-titre {
@@ -1021,6 +1281,11 @@
         font-size: 0.95rem;
         color: #333;
         }
+        .product-card {
+        flex: 0 0 auto;
+        width: 251px;
+        scroll-snap-align: start;
+        }
         
 
     /* Animation */
@@ -1045,6 +1310,8 @@
         font-size: 0.85rem;
     }
     }
+
+
     </style>
 <style>
   #about-ae-piscine {
@@ -1114,8 +1381,6 @@
     fill: #0288d1;
   }
 </style>
-    
-
 
     <footer>
         {% include "store/footer.html" %}
@@ -1145,6 +1410,7 @@
                 });
             }
             
+            // Handle top-level dropdown toggles
             document.querySelectorAll('.main-nav .nav-item-dropdown > a, .main-nav .nav-item-dropdown > .nav-item-label').forEach(item => {
                 item.addEventListener('click', function(event) {
                     if (window.innerWidth <= 768 && this.parentElement.classList.contains('nav-item-dropdown')) {
@@ -1160,40 +1426,44 @@
                 });
             });
 
-            // Mobile submenu accordion toggle - Fix for all category items with submenus
-            // Add a small delay to ensure DOM is fully loaded
-            setTimeout(() => {
-                // First, let's add the has-submenu class to any li elements that have a submenu
-                document.querySelectorAll('.main-nav .dropdown-menu li').forEach(li => {
-                    if (li.querySelector('.submenu')) {
-                        li.classList.add('has-submenu');
-                    }
-                });
-                
-                // Now attach click handlers to all category items with submenus
-                document.querySelectorAll('.main-nav .dropdown-menu li.has-submenu > div > a').forEach(anchor => {
-                    anchor.addEventListener('click', function(event) {
-                        if (window.innerWidth <= 768) { // Only apply on mobile
-                            const parentLi = this.closest('li.has-submenu'); // This is the <li> with submenu
-                            const submenu = parentLi.querySelector('.submenu');
-
-                            if (submenu) {
-                                // Always prevent default navigation on mobile for items with submenus
-                                event.preventDefault();
-                                event.stopPropagation();
-                                
-                                // Toggle the open class
-                                parentLi.classList.toggle('open');
-                                submenu.classList.toggle('open');
-                                
-                                // Toggle display style directly for immediate effect
-                                submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
-                                
-                                console.log('Toggled submenu for:', this.textContent.trim());
-                            }
+            // Handle submenu toggles for both mobile and desktop
+            document.querySelectorAll('.category-menu-item.has-submenu > a').forEach(anchor => {
+                anchor.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent navigation for parent categories with submenus
+                    
+                    const parentLi = this.closest('.category-menu-item.has-submenu');
+                    const submenu = parentLi.querySelector('.submenu');
+                    
+                    if (window.innerWidth <= 768) { // Mobile behavior
+                        if (submenu) {
+                            // Toggle the open class
+                            parentLi.classList.toggle('open');
+                            
+                            // Toggle display style directly for immediate effect
+                            submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
                         }
-                        // For desktop, let the default hover behavior (CSS) handle submenus
-                    });
+                    } else { // Desktop behavior
+                        if (submenu) {
+                            // Check if this submenu is already open
+                            const isOpen = submenu.style.display === 'block';
+                            
+                            // Close all other open submenus at the same level
+                            const siblingItems = parentLi.parentNode.querySelectorAll(':scope > .category-menu-item.has-submenu');
+                            siblingItems.forEach(item => {
+                                if (item !== parentLi) {
+                                    const siblingSubmenu = item.querySelector('.submenu');
+                                    if (siblingSubmenu) {
+                                        item.classList.remove('open');
+                                        siblingSubmenu.style.display = 'none';
+                                    }
+                                }
+                            });
+                            
+                            // Toggle this submenu
+                            parentLi.classList.toggle('open', !isOpen);
+                            submenu.style.display = isOpen ? 'none' : 'block';
+                        }
+                    }
                 });
             });
 
@@ -1452,8 +1722,8 @@
             }
         }
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/easyzoom/2.5.0/easyzoom.js"></script>
-     <script src="{% static 'js/zoom.js' %}"></script>
+    <!-- Using Fancybox for image zoom instead of EasyZoom -->
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
     <!-- The mobile menu toggle functionality is already handled in the main script above -->
 </body>
 
